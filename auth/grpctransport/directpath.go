@@ -16,6 +16,7 @@ package grpctransport
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"os"
 	"strconv"
@@ -101,12 +102,17 @@ func configureDirectPath(grpcOpts []grpc.DialOption, opts *Options, endpoint str
 		for _, ev := range opts.InternalOptions.AllowHardBoundTokens {
 			if ev == "ALTS" {
 				opts.DetectOpts.TokenBindingType = credentials.ALTSHardBinding
-				defaultCredetialsOptions.ALTSPerRPCCreds = credentials.DetectDefault(opts.resolveDetectOptions())
+				altsCreds, err := credentials.DetectDefault(opts.resolveDetectOptions())
+				if err != nil {
+					fmt.Printf("err getting altsCreds: %v", err)
+				} else {
+					defaultCredetialsOptions.ALTSPerRPCCreds = &grpcCredentialsProvider{creds: altsCreds}
+				}
 				break
 			}
 		}
 		grpcOpts = []grpc.DialOption{
-			grpc.WithCredentialsBundle(grpcgoogle.NewDefaultCredentialsWithOptions(defaultCredetialsOptions)}
+			grpc.WithCredentialsBundle(grpcgoogle.NewDefaultCredentialsWithOptions(defaultCredetialsOptions))}
 		if timeoutDialerOption != nil {
 			grpcOpts = append(grpcOpts, timeoutDialerOption)
 		}

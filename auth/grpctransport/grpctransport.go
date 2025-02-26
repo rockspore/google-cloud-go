@@ -342,7 +342,7 @@ func dial(ctx context.Context, secure bool, opts *Options) (*grpc.ClientConn, er
 		)
 		// Attempt Direct Path
 		var altsCreds *auth.Credentials
-		fmt.Printf("attempt DirectPath\n")
+		fmt.Printf("attempt DirectPath, %v\n", opts.InternalOptions.AllowHardBoundTokens)
 		for _, ev := range opts.InternalOptions.AllowHardBoundTokens {
 			if ev == "ALTS" {
 				opts.DetectOpts.TokenBindingType = credentials.ALTSHardBinding

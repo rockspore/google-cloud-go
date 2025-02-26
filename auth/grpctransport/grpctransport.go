@@ -349,6 +349,7 @@ func dial(ctx context.Context, secure bool, opts *Options) (*grpc.ClientConn, er
 				if err != nil {
 					return nil, err
 				}
+				fmt.Printf("using ALTS credentials")
 				altsCreds = ac
 				break
 			}
